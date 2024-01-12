@@ -1,0 +1,58 @@
+name: CI/CD Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Build and test
+        run: |
+          cd backend
+          mvn clean package -DskipTests
+
+        # Log in to Docker Hub using GitHub credentials
+        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+        # Build Docker image
+        docker build -t backend .
+
+        # Push Docker image to Docker Hub (GitHub Container Registry in this case)
+        docker tag backend ghcr.io/${{ github.repository_owner }}/backend:latest
+        docker push ghcr.io/${{ github.repository_owner }}/backend:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          distribution: "adopt"
+          java-version: "11"
+
+      - name: Build and deploy Docker containers
+        run: |
+          cd backend
+          mvn clean package -DskipTests
+          docker build -t bobapp-back .
+          docker build -t bobapp-front ./frontend
+          # Add Docker Hub credentials and push images
+          docker push bobapp-back
+          docker push bobapp-front
