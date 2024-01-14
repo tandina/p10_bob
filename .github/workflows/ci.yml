@@ -66,5 +66,5 @@ jobs:
           cd ..
           docker build -t bobapp-front ./front
           # Add Docker Hub credentials and push images
-          docker push bobapp-back
-          docker push bobapp-front
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-back
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-front
