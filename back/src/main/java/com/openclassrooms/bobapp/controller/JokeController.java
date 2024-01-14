@@ -11,6 +11,7 @@ import com.openclassrooms.bobapp.service.JokeService;
 @RequestMapping("api/joke")
 public class JokeController {
 // test quality gates
+//test branch test-ci-cd
     private final JokeService jokeService;
 
     JokeController(JokeService jokeService) {
