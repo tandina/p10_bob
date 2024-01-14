@@ -64,7 +64,7 @@ jobs:
           mvn clean package -DskipTests
           docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-back .
           cd ..
-          docker build -t bobapp-front ./front
+          docker build -t ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-front ./front
           # Add Docker Hub credentials and push images
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-back
           docker push ${{ secrets.DOCKER_HUB_USERNAME }}/bobapp-front
